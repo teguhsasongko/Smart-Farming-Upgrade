@@ -1,7 +1,7 @@
 #include <ESP8266WiFi.h>
 
 const char* ssid     = "localhost";
-const char* password = "27BF7F16";
+const char* password = "";
 
 const char* host = "192.168.1.9";
 String sentence;
