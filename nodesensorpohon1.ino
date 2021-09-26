@@ -16,7 +16,6 @@ int sensorPin = A0;
 int nilai;
 float temp = 0;
 float humid = 0;
-String kondisi;
 
 //PH Tanah Init
 #define analogInPin A0
@@ -90,26 +89,9 @@ void loop()
    
   // Pengukuran Kelembaban Tanah
   nilai = analogRead(sensorPin); 
-  if(nilai > 700)
-  {
     Serial.print("Pohon 1 = ");
     Serial.println(nilai);
-    kondisi = "Tanah Kering";
-    delay(1000);
-  }
-  else if(nilai >= 350 && nilai <= 700)
-  {
-    Serial.print("Pohon 1 = ");
-    Serial.println(nilai);
-    kondisi = "Tanah Normal";
-    delay(1000);
-  }
-  else if(nilai < 350){
-    Serial.print("Pohon 1 = ");
-    Serial.println(nilai);
-    kondisi = "Tanah Lembab";
-    delay(1000);
-  }
+    
   kirim();
   delay(5000);
 }
@@ -119,16 +101,15 @@ void kirim()   //CONNECTING WITH MYSQL
 String apiUrl = "/lomba/pohon1.php?";
   apiUrl += "data0="+String(nilai);
   apiUrl += "&data1="+String(outputValue);
-  apiUrl += "&data2="+String(temp);
-  apiUrl += "&data3="+String(humid);
-  apiUrl += "&data4="+String(kondisi);
+  apiUrl += "&data2="+String(humid);
+  apiUrl += "&data3="+String(temp);
+//  apiUrl += "&data4="+String(kondisi);
 
   // Set header Request
   client.print(String("GET ") + apiUrl + " HTTP/1.1\r\n" +
                "Host: " + host + "\r\n" +
                "Connection: close\r\n\r\n");
   Serial.print(apiUrl);
-  delay(5000);
   
 //   Pastikan tidak berlarut-larut
   unsigned long timeout = millis();
