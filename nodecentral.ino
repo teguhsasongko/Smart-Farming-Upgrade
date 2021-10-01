@@ -1,9 +1,12 @@
 #include <ESP8266WiFi.h>
+#include <SoftwareSerial.h>
+SoftwareSerial espSerial(14,12);
 
 const char* ssid     = "localhost";
 const char* password = "";
-
 const char* host = "192.168.1.9";
+const int httpPort = 80;
+
 String sentence;
 String pohon1;
 String ph1;
@@ -11,13 +14,19 @@ String humi1;
 String tempe1;
 String pohon2;
 String ph2;
+String air;
+String pupuk;
+String pompaair;
+String pompapupuk;
 
+WiFiClient client;
+  
 void setup() {
-  Serial.begin(115200);
-  delay(10);
+  Serial.begin(9600);
+  espSerial.begin(9600);
+  delay(1000);
 
   // We start by connecting to a WiFi network
-
   Serial.println();
   Serial.println();
   Serial.print("Connecting to ");
@@ -29,7 +38,9 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
-
+  
+  while (!Serial) {; // wait for serial port to connect. Needed for native USB port only
+  }
   Serial.println("");
   Serial.println("WiFi connected"); 
   Serial.println("IP address: ");
@@ -41,8 +52,6 @@ void loop() {
   Serial.println(host);
  
   // Use WiFiClient class to create TCP connections
-  WiFiClient client;
-  const int httpPort = 80;
   if (!client.connect(host, httpPort)) {
     Serial.println("connection failed");
     return;
@@ -61,6 +70,7 @@ void loop() {
   if (client.available()){
     String line = client.readString();
 //    Serial.print(line);
+   espSerial.println(line);
 
     pohon1 = String(getValue(line,' ',0));
     Serial.print("Pohon 1: ");
@@ -85,10 +95,53 @@ void loop() {
     ph2 = String(getValue(line,' ',5));
     Serial.print("pH Tanah:");
     Serial.println(ph2); 
+    
+    air = String(getValue(line,' ',6));
+    Serial.print("Ketersediaan Air: ");
+    Serial.println(air); 
 
+    pupuk = String(getValue(line,' ',7));
+    Serial.print("Ketersediaan Pupuk:");
+    Serial.println(pupuk); 
     
     }
+//Send Data to Arduino
+//espSerial.println(String(pohon1)+" "+String(ph1)+" "+String(humi1)+" "+String(tempe1)+" "+String(pohon2)+" "+String(ph2)+" "+String(air)+" "+String(pupuk));
+//espSerial.println("CEK KONEKSI");
+
 }
+
+void kirim()   //CONNECTING WITH MYSQL
+ { 
+String apiUrl = "/lomba/kirim.php?";
+  apiUrl += "1="+String(pohon1);
+  apiUrl += "&2="+String(pohon2);
+  apiUrl += "&3="+String(ph2);
+  apiUrl += "&4="+String(humi1);
+  apiUrl += "&5="+String(tempe1);
+  apiUrl += "&6="+String(air);
+  apiUrl += "&7="+String(pupuk);
+  
+  // Set header Request
+  client.print(String("GET ") + apiUrl + " HTTP/1.1\r\n" +
+               "Host: " + host + "\r\n" +
+               "Connection: close\r\n\r\n");
+
+  // Pastikan tidak berlarut-larut
+  unsigned long timeout = millis();
+  while (client.available() == 0) {
+    if (millis() - timeout > 1000) {
+      Serial.println(">>> Client Timeout !");
+      Serial.println(">>> Operation failed !");
+      client.stop();
+      return;
+    }
+  }
+  // Baca hasil balasan dari PHP
+  while (client.available()) {
+    String line = client.readStringUntil('\r');
+    Serial.println(line);
+  }
 
 String getValue(String data, char separator, int index){
   int found = 0;
