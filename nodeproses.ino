@@ -81,7 +81,7 @@ if (Serial.available()) {
 
 ///////////////////////////////////////////////////////////////////////////
 //Kelembapan Pohon 1
-if(pohon1 >= String(700)){
+if(pohon1 > String(700) && humi1 < String(31)){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Pohon 1 = ");
@@ -98,7 +98,7 @@ if(pohon1 >= String(700)){
   lcd.print("ON");
   delay(1000);
 }
-else if(pohon1 >= String(350) && pohon1 <= String(700)){
+else if(pohon1 > String(350) && pohon1 < String(700)){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Pohon 1 = ");
@@ -115,7 +115,7 @@ else if(pohon1 >= String(350) && pohon1 <= String(700)){
   lcd.print("OFF");
   delay(1000);
 }
-else if(pohon1 <= String(350)){
+else if(pohon1 < String(350)){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Pohon 1 = ");
@@ -135,7 +135,7 @@ else if(pohon1 <= String(350)){
 }
   
 //Kelembapan Pohon 2
-if(pohon2 >= String(700)){
+if(pohon2 > String(700) && pohon1 < String(700)){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Pohon 2 = ");
@@ -152,7 +152,7 @@ if(pohon2 >= String(700)){
   lcd.print("ON");
   delay(1000);
 }
-else if(pohon2 >= String(350) && pohon2 <= String(700)){
+else if(pohon2 > String(350) && humi1 < String(31)){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Pohon 2 = ");
@@ -169,7 +169,7 @@ else if(pohon2 >= String(350) && pohon2 <= String(700)){
   lcd.print("OFF");
   delay(1000);
 }
-else if(pohon2 <= String(350)){
+else if(pohon2 < String(350)){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Pohon 2 = ");
@@ -200,11 +200,11 @@ else if(pohon2 <= String(350)){
   delay(1000);
   
 //PH Tanah dari Pohon 2    
-  if(ph2 < String(6.5)){
+  if(ph1 < String(6.6) && humi1 < String(31)){
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("pH = ");
-    lcd.print(ph2);
+    lcd.print(ph1);
     lcd.setCursor(0,1);
     lcd.print("Tanah Perlu Pupuk");
     delay(1000);
@@ -217,11 +217,11 @@ else if(pohon2 <= String(350)){
     lcd.print("ON");
     delay(1000);
    }
-   else if(ph2 > String(6,6)){
+   else if(ph1 > String(6,6)){
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("pH = ");
-    lcd.print(ph2);
+    lcd.print(ph1);
     lcd.setCursor(0,1);
     lcd.print("Pupuk Cukup");
     delay(1000);
